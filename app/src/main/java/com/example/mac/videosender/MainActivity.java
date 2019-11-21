@@ -38,12 +38,12 @@ public class MainActivity extends AppCompatActivity{
     private byte[] byteArray;
     public static  Handler handler;
     public String clientIP;
-    public static final int CLIENT_PORT = 8686;
-    public static final int SERVER_PORT = 8080;
+    public static final int RECEIVER_PORT = 8686;
+    public static final int SENDER_PORT = 8080;
 
-    private TextView ipTextView = (TextView) findViewById(R.id.ip);;
-    private Button startButton = (Button) findViewById(R.id.start);
-    private SurfaceView cameraSurfaceView = (SurfaceView) findViewById(R.id.camera_view);
+    private TextView ipTextView;
+    private Button startButton;
+    private SurfaceView cameraSurfaceView;
 
     private android.hardware.Camera camera;
     private final static int PREVIEW_WIDTH = 200;
@@ -54,6 +54,10 @@ public class MainActivity extends AppCompatActivity{
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        ipTextView = findViewById(R.id.ip);
+        startButton = findViewById(R.id.start);
+        cameraSurfaceView = findViewById(R.id.camera_view);
 
         ipTextView.setText(getIpAddress());
 
@@ -126,7 +130,7 @@ public class MainActivity extends AppCompatActivity{
             byteArray = imageOutputstream.toByteArray();
             ByteArrayInputStream inputStream = new ByteArrayInputStream(byteArray);
 
-            Socket tempSocket = new Socket(clientIP, CLIENT_PORT);
+            Socket tempSocket = new Socket(clientIP, RECEIVER_PORT);
             imageOutSocket = tempSocket.getOutputStream();
             int amount = 0;
             while ((amount = inputStream.read(byteBuffer)) != -1) {
@@ -142,7 +146,7 @@ public class MainActivity extends AppCompatActivity{
 
     public class SocketServerThread extends Thread {
 
-        static final int SocketServerPORT = SERVER_PORT;
+        static final int SocketServerPORT = SENDER_PORT;
         private ServerSocket serverSocket;
         private Socket phoneSocket;
 
@@ -263,7 +267,7 @@ public class MainActivity extends AppCompatActivity{
 
                     byteArray = myoutputstream.toByteArray();
                     ByteArrayInputStream inputStream = new ByteArrayInputStream(byteArray);
-                    Socket tempSocket = new Socket(clientIP, CLIENT_PORT);
+                    Socket tempSocket = new Socket(clientIP, RECEIVER_PORT);
                     outsocket = tempSocket.getOutputStream();
                     int amount, num = 0;
                     while ((amount = inputStream.read(byteBuffer)) != -1) {
